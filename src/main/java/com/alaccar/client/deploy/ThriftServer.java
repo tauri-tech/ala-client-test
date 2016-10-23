@@ -23,8 +23,6 @@ public class ThriftServer {
             WorkOrderService.Iface service = (WorkOrderService.Iface) context.getBean("workOrderService");
             System.out.println("ThriftClient  Start...");
             getWorkOrderModel(service);
-            changeWorkOrderStatus(service);
-            getWorkOrderModel(service);
         }catch(Exception e){
             throw new RuntimeException("thrift Error"+"\n"+e.getMessage());
         }
@@ -39,12 +37,17 @@ public class ThriftServer {
     }
     public static void getWorkOrderModel(WorkOrderService.Iface service){
         try {
-            WorkOrderModel model = service.getWorkOrderById(5);
-            System.out.println("workmodel id is "+model.getId());
-            System.out.println("workmodel status is "+model.getOrderStatus());
-            System.out.println("content is ");
-            for(WorkOrderMsgModel msg :model.getMsgList()){
-                System.out.println(msg.getContent());
+            int sceneId = 100;
+            int sceneType = 0;
+            int senderId = 2;
+            List<WorkOrderModel> modelList = service.getWorkOrderListBySenderInfo(senderId, sceneId, sceneType);
+            for(WorkOrderModel model :modelList){
+                System.out.println("workmodel id is "+model.getId());
+                System.out.println("workmodel status is "+model.getOrderStatus());
+                System.out.println("content is ");
+                for(WorkOrderMsgModel msg :model.getMsgList()){
+                    System.out.println(msg.getContent());
+                }
             }
         } catch (TException e) {
             // TODO Auto-generated catch block
@@ -80,7 +83,7 @@ public class ThriftServer {
     }
     private static WorkOrderMsgModel constructMsgModel() {
         WorkOrderMsgModel msgModel =new WorkOrderMsgModel();
-        msgModel.setContent("µÚ¶þ¸ö²âÊÔÖÐÎÄ");
+        msgModel.setContent("ç¬¬äºŒä¸ªæµ‹è¯•ä¸­æ–‡");
         msgModel.setOrderEntityId(5);
         msgModel.setMsgFrom(2);
         msgModel.setMsgTo(4);
